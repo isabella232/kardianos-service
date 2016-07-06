@@ -187,6 +187,10 @@ func (s *darwinLaunchdService) Restart() error {
 	time.Sleep(50 * time.Millisecond)
 	return s.Start()
 }
+func (s *darwinLaunchdService) Status() error {
+        // Not implemented
+        return nil
+}
 
 func (s *darwinLaunchdService) Run() error {
 	var err error
