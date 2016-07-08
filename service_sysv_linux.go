@@ -110,6 +110,8 @@ func (s *sysv) Uninstall() error {
 	if err := os.Remove(cp); err != nil {
 		return err
 	}
+	// Remove log file.
+	os.Remove(fmt.Sprintf("/var/log/%s.log", s.Name))
 	return nil
 }
 
