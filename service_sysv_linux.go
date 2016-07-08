@@ -73,12 +73,10 @@ func (s *sysv) Install() error {
 	var to = &struct {
 		*Config
 		Path string
-		PIDFile string
 		Environment string
 	}{
 		s.Config,
 		path,
-		s.Option.string(optionPIDFile, ""),
 		s.Option.string(optionEnvironment, ""),
 	}
 
@@ -180,7 +178,7 @@ const sysvScript = `#!/bin/sh
 cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
 
 name=$(basename $0)
-pid_file={{if .PIDFile}}{{.PIDFile}}{{else}}/var/run/$name.pid{{end}}
+pid_file="/var/run/$name.pid"
 log_file="/var/log/$name.log"
 
 {{if .Environment}}export {{.Environment|cmd}}{{end}}
