@@ -73,9 +73,11 @@ func (s *sysv) Install() error {
 	var to = &struct {
 		*Config
 		Path string
+		Environment string
 	}{
 		s.Config,
 		path,
+		s.Option.string(optionEnvironment, ""),
 	}
 
 	err = s.template().Execute(f, to)
@@ -108,6 +110,8 @@ func (s *sysv) Uninstall() error {
 	if err := os.Remove(cp); err != nil {
 		return err
 	}
+	// Remove log file.
+	os.Remove(fmt.Sprintf("/var/log/%s.log", s.Name))
 	return nil
 }
 
@@ -153,6 +157,10 @@ func (s *sysv) Restart() error {
 	return s.Start()
 }
 
+func (s *sysv) Status() error {
+	return run("service", s.Name, "status")
+}
+
 const sysvScript = `#!/bin/sh
 # For RedHat and cousins:
 # chkconfig: - 99 01
@@ -173,8 +181,9 @@ cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
 
 name=$(basename $0)
 pid_file="/var/run/$name.pid"
-stdout_log="/var/log/$name.log"
-stderr_log="/var/log/$name.err"
+log_file="/var/log/$name.log"
+
+{{if .Environment}}export {{.Environment|cmd}}{{end}}
 
 get_pid() {
     cat "$pid_file"
@@ -191,10 +200,10 @@ case "$1" in
         else
             echo "Starting $name"
             {{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
-            $cmd >> "$stdout_log" 2>> "$stderr_log" &
+            $cmd >> "$log_file" 2>&1 &
             echo $! > "$pid_file"
             if ! is_running; then
-                echo "Unable to start, see $stdout_log and $stderr_log"
+                echo "Unable to start, see $log_file"
                 exit 1
             fi
         fi

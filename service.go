@@ -59,7 +59,7 @@
 //			logger.Error(err)
 //		}
 //	}
-package service // import "github.com/kardianos/service"
+package service // import "github.com/roman-vynar/service"
 
 import (
 	"errors"
@@ -82,6 +82,7 @@ const (
 	optionRunWait      = "RunWait"
 	optionReloadSignal = "ReloadSignal"
 	optionPIDFile      = "PIDFile"
+	optionEnvironment  = "Environment"
 )
 
 // Config provides the setup for a Service. The Name field is required.
@@ -113,7 +114,8 @@ type Config struct {
 	//  * POSIX
 	//    - RunWait      func() (wait for SIGNAL) - Do not install signal but wait for this function to return.
 	//    - ReloadSignal string () [USR1, ...] - Signal to send on reaload.
-	//    - PIDFile     string () [/run/prog.pid] - Location of the PID file.
+	//    - PIDFile      string () [/run/prog.pid] - Location of the PID file (systemd, systemv).
+	//    - Environment  string () [var=value] - Set environment variable (systemd, systemv, upstart).
 	Option KeyValue
 }
 
@@ -319,6 +321,10 @@ type Service interface {
 	// greater rights. Will return an error if the service is not present.
 	Uninstall() error
 
+	// Status requests the given service status from the OS service manager.
+	// Will return an error if the service is not running or not installed.
+	Status() error
+
 	// Opens and returns a system logger. If the user program is running
 	// interactively rather then as a service, the returned logger will write to
 	// os.Stderr. If errs is non-nil errors will be sent on errs as well as
@@ -335,7 +341,7 @@ type Service interface {
 }
 
 // ControlAction list valid string texts to use in Control.
-var ControlAction = [5]string{"start", "stop", "restart", "install", "uninstall"}
+var ControlAction = [6]string{"start", "stop", "restart", "install", "uninstall", "status"}
 
 // Control issues control functions to the service from a given action string.
 func Control(s Service, action string) error {
@@ -351,6 +357,8 @@ func Control(s Service, action string) error {
 		err = s.Install()
 	case ControlAction[4]:
 		err = s.Uninstall()
+	case ControlAction[5]:
+		err = s.Status()
 	default:
 		err = fmt.Errorf("Unknown action %s", action)
 	}

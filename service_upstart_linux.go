@@ -82,9 +82,11 @@ func (s *upstart) Install() error {
 	var to = &struct {
 		*Config
 		Path string
+		Environment string
 	}{
 		s.Config,
 		path,
+		s.Option.string(optionEnvironment, ""),
 	}
 
 	return s.template().Execute(f, to)
@@ -98,6 +100,8 @@ func (s *upstart) Uninstall() error {
 	if err := os.Remove(cp); err != nil {
 		return err
 	}
+	// Remove log file.
+	os.Remove(fmt.Sprintf("/var/log/%s.log", s.Name))
 	return nil
 }
 
@@ -143,11 +147,19 @@ func (s *upstart) Restart() error {
 	return s.Start()
 }
 
+func (s *upstart) Status() error {
+	// initctl status does not return non-zero code when service is stopped.
+	cmd := fmt.Sprintf("initctl status %s | grep 'start/running'", s.Name)
+	return run("/bin/sh", "-c", cmd)
+}
+
 // The upstart script should stop with an INT or the Go runtime will terminate
 // the program before the Stop handler can run.
 const upstartScript = `# {{.Description}}
 
- {{if .DisplayName}}description    "{{.DisplayName}}"{{end}}
+{{if .DisplayName}}description "{{.DisplayName}}"{{end}}
+
+{{if .Environment}}env {{.Environment|cmd}}{{end}}
 
 kill signal INT
 {{if .ChRoot}}chroot {{.ChRoot}}{{end}}
@@ -168,5 +180,5 @@ pre-start script
 end script
 
 # Start
-exec {{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}
+exec {{.Path}}{{range .Arguments}} {{.|cmd}}{{end}} >> /var/log/{{.Name}}.log 2>&1
 `

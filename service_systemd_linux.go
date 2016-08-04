@@ -82,11 +82,13 @@ func (s *systemd) Install() error {
 		Path string
 		ReloadSignal string
 		PIDFile string
+		Environment string
 	}{
 		s.Config,
 		path,
 		s.Option.string(optionReloadSignal, ""),
 		s.Option.string(optionPIDFile, ""),
+		s.Option.string(optionEnvironment, ""),
 	}
 
 	err = s.template().Execute(f, to)
@@ -113,6 +115,8 @@ func (s *systemd) Uninstall() error {
 	if err := os.Remove(cp); err != nil {
 		return err
 	}
+	// Remove log file.
+	os.Remove(fmt.Sprintf("/var/log/%s.log", s.Name))
 	return nil
 }
 
@@ -153,6 +157,10 @@ func (s *systemd) Restart() error {
 	return run("systemctl", "restart", s.Name+".service")
 }
 
+func (s *systemd) Status() error {
+	return run("systemctl", "status", s.Name+".service")
+}
+
 const systemdScript = `[Unit]
 Description={{.Description}}
 ConditionFileIsExecutable={{.Path|cmdEscape}}
@@ -160,12 +168,13 @@ ConditionFileIsExecutable={{.Path|cmdEscape}}
 [Service]
 StartLimitInterval=5
 StartLimitBurst=10
-ExecStart={{.Path|cmdEscape}}{{range .Arguments}} {{.|cmd}}{{end}}
+ExecStart=/bin/sh -c '{{.Path|cmdEscape}}{{range .Arguments}} {{.|cmd}}{{end}} >> /var/log/{{.Name}}.log 2>&1'
 {{if .ChRoot}}RootDirectory={{.ChRoot|cmd}}{{end}}
 {{if .WorkingDirectory}}WorkingDirectory={{.WorkingDirectory|cmd}}{{end}}
 {{if .UserName}}User={{.UserName}}{{end}}
 {{if .ReloadSignal}}ExecReload=/bin/kill -{{.ReloadSignal}} "$MAINPID"{{end}}
-{{if .PIDFile}}PIDFile={{.PIDFile|cmd}}{{end}}
+{{if .PIDFile}}PIDFile={{.PIDFile}}{{end}}
+{{if .Environment}}Environment={{.Environment|cmd}}{{end}}
 Restart=always
 RestartSec=120
 
