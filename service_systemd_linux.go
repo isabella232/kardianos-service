@@ -168,7 +168,7 @@ ConditionFileIsExecutable={{.Path|cmdEscape}}
 [Service]
 StartLimitInterval=5
 StartLimitBurst=10
-ExecStart=/bin/sh -c '{{.Path|cmdEscape}}{{range .Arguments}} {{.|cmd}}{{end}} >> /var/log/{{.Name}}.log 2>&1'
+ExecStart=/bin/sh -c '{{.Path|cmdEscape}}{{range .Arguments}} {{.}}{{end}} >> /var/log/{{.Name}}.log 2>&1'
 {{if .ChRoot}}RootDirectory={{.ChRoot|cmd}}{{end}}
 {{if .WorkingDirectory}}WorkingDirectory={{.WorkingDirectory|cmd}}{{end}}
 {{if .UserName}}User={{.UserName}}{{end}}

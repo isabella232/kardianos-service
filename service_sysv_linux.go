@@ -177,7 +177,7 @@ const sysvScript = `#!/bin/sh
 # Description:       {{.Description}}
 ### END INIT INFO
 
-cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
+cmd='{{.Path}}{{range .Arguments}} {{.}}{{end}}'
 
 name=$(basename $0)
 pid_file="/var/run/$name.pid"

@@ -180,5 +180,5 @@ pre-start script
 end script
 
 # Start
-exec {{.Path}}{{range .Arguments}} {{.|cmd}}{{end}} >> /var/log/{{.Name}}.log 2>&1
+exec {{.Path}}{{range .Arguments}} {{.}}{{end}} >> /var/log/{{.Name}}.log 2>&1
 `
