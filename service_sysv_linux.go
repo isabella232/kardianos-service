@@ -244,9 +244,9 @@ case "$1" in
     ;;
     status)
         if is_running; then
-            echo "Running"
+            echo "$name (pid $(get_pid)) is running..."
         else
-            echo "Stopped"
+            echo "$name is stopped"
             exit 1
         fi
     ;;
