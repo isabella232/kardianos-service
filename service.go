@@ -82,7 +82,6 @@ const (
 	optionRunWait      = "RunWait"
 	optionReloadSignal = "ReloadSignal"
 	optionPIDFile      = "PIDFile"
-	optionEnvironment  = "Environment"
 )
 
 // Config provides the setup for a Service. The Name field is required.
@@ -105,6 +104,9 @@ type Config struct {
 	WorkingDirectory string // Initial working directory.
 	ChRoot           string
 
+	// Array of environment variables for Linux: var=val
+	Environment []string
+
 	// System specific options.
 	//  * OS X
 	//    - KeepAlive     bool (true)
@@ -115,7 +117,6 @@ type Config struct {
 	//    - RunWait      func() (wait for SIGNAL) - Do not install signal but wait for this function to return.
 	//    - ReloadSignal string () [USR1, ...] - Signal to send on reaload.
 	//    - PIDFile      string () [/run/prog.pid] - Location of the PID file (systemd, systemv).
-	//    - Environment  string () [var=value] - Set environment variable (systemd, systemv, upstart).
 	Option KeyValue
 }
 

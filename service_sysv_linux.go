@@ -73,11 +73,9 @@ func (s *sysv) Install() error {
 	var to = &struct {
 		*Config
 		Path string
-		Environment string
 	}{
 		s.Config,
 		path,
-		s.Option.string(optionEnvironment, ""),
 	}
 
 	err = s.template().Execute(f, to)
@@ -183,7 +181,8 @@ name=$(basename $0)
 pid_file="/var/run/$name.pid"
 log_file="/var/log/$name.log"
 
-{{if .Environment}}export {{.Environment|cmd}}{{end}}
+{{range .Environment}}export {{.|cmd}}
+{{end}}
 
 get_pid() {
     cat "$pid_file"

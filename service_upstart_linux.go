@@ -82,11 +82,9 @@ func (s *upstart) Install() error {
 	var to = &struct {
 		*Config
 		Path string
-		Environment string
 	}{
 		s.Config,
 		path,
-		s.Option.string(optionEnvironment, ""),
 	}
 
 	return s.template().Execute(f, to)
@@ -159,7 +157,8 @@ const upstartScript = `# {{.Description}}
 
 {{if .DisplayName}}description "{{.DisplayName}}"{{end}}
 
-{{if .Environment}}env {{.Environment|cmd}}{{end}}
+{{range .Environment}}env {{.|cmd}}
+{{end}}
 
 kill signal INT
 {{if .ChRoot}}chroot {{.ChRoot}}{{end}}
