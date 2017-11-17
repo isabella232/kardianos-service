@@ -1,4 +1,4 @@
-all: sysv systemd upstart clean
+all: systemd upstart supervisord sysv clean
 
 test:
 	@env GOOS=linux go test -c -o service.test ..
@@ -32,3 +32,12 @@ upstart: test
 	@-docker rm $(shell docker ps -l -q)
 	@-docker rmi -f service.test.upstart
 	@-rm upstart/service.test
+
+supervisord: test
+	@echo supervisord
+	@cp service.test supervisord/
+	@docker build -q --tag="service.test.supervisord" supervisord
+	@-docker run service.test.supervisord
+	@-docker rm $(shell docker ps -l -q)
+	@-docker rmi -f service.test.supervisord
+	@-rm supervisord/service.test

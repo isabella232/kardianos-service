@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package service provides a simple way to create a system service.
-// Currently supports Windows, Linux/(systemd | Upstart | SysV), and OSX/Launchd.
+// Currently supports Windows, Linux/(systemd | Upstart | Supervisord | SysV), and OSX/Launchd.
 //
 // Windows controls services by setting up callbacks that is non-trivial. This
 // is very different then other systems. This package provides the same API
@@ -115,7 +115,7 @@ type Config struct {
 	//    - SessionCreate bool (false) - Create a full user session.
 	//  * POSIX
 	//    - RunWait      func() (wait for SIGNAL) - Do not install signal but wait for this function to return.
-	//    - ReloadSignal string () [USR1, ...] - Signal to send on reaload.
+	//    - ReloadSignal string () [USR1, ...] - Signal to send on reload.
 	//    - PIDFile      string () [/run/prog.pid] - Location of the PID file (systemd, systemv).
 	Option KeyValue
 }

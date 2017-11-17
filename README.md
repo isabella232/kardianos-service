@@ -1,7 +1,7 @@
 # service [![GoDoc](https://godoc.org/github.com/percona/kardianos-service?status.svg)](https://godoc.org/github.com/percona/kardianos-service) [![Build Status](https://travis-ci.org/percona/kardianos-service.svg)](https://travis-ci.org/percona/kardianos-service)
 
 service will install / un-install, start / stop, and run a program as a service (daemon).
-Currently supports Windows XP+, Linux/(systemd | Upstart | SysV), and OSX/Launchd.
+Currently supports Windows XP+, Linux/(systemd | Upstart | Supervisord | SysV), and OSX/Launchd.
 
 Windows controls services by setting up callbacks that is non-trivial. This
 is very different then other systems. This package provides the same API
