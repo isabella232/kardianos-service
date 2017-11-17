@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	service "github.com/percona/kardianos-service"
+	"github.com/percona/kardianos-service"
 )
 
 const runAsServiceArg = "RunThisAsService"

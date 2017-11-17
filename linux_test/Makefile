@@ -1,8 +1,7 @@
-
 all: sysv systemd upstart clean
 
 test:
-	@go test -c ..
+	@env GOOS=linux go test -c -o service.test ..
 
 clean:
 	-rm service.test
