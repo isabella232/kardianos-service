@@ -164,7 +164,7 @@ func (s *upstart) Status() error {
 // the program before the Stop handler can run.
 const upstartScript = `# {{.Description}}
 
-{{if .DisplayName}}description "{{.DisplayName}}"{{end}}
+{{if .DisplayName}}description    "{{.DisplayName}}"{{end}}
 
 {{range .Environment}}env {{.|cmd}}
 {{end}}
