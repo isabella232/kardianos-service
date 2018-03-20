@@ -3,9 +3,9 @@ go_import_path: github.com/percona/kardianos-service
 sudo: required
 
 go:
-  - 1.7.x
   - 1.8.x
   - 1.9.x
+  - 1.10.x
   - master
 
 matrix:
