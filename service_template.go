@@ -23,4 +23,15 @@ var tf = map[string]interface{}{
 	"envValue": func(env string) string {
 		return strings.Join(strings.Split(env, "=")[1:], "=")
 	},
+
+	// http://supervisord.org/configuration.html?highlight=environment#file-format
+	//   > This option can include the value %(here)s, which expands to the directory in which the supervisord
+	//   > configuration file was found. Values containing non-alphanumeric characters should be quoted
+	//   > (e.g. KEY="val:123",KEY2="val,456"). Otherwise, quoting the values is optional but recommended.
+	//   > To escape percent characters, simply use two. (e.g. URI="/first%%20name")
+	// See also https://github.com/Supervisor/supervisor/issues/328
+	"envValueSupervisord": func(env string) string {
+		v := strings.Join(strings.Split(env, "=")[1:], "=")
+		return `'` + strings.Replace(v, "%", "%%", -1) + `'`
+	},
 }
