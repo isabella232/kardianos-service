@@ -1,4 +1,4 @@
-# service [![GoDoc](https://godoc.org/github.com/percona/kardianos-service?status.svg)](https://godoc.org/github.com/percona/kardianos-service)
+# service [![GoDoc](https://godoc.org/github.com/percona/kardianos-service?status.svg)](https://godoc.org/github.com/percona/kardianos-service)[![CLA assistant](https://cla-assistant.percona.com/readme/badge/percona/kardianos-service)](https://cla-assistant.percona.com/percona/kardianos-service)
 
 service will install / un-install, start / stop, and run a program as a service (daemon).
 Currently supports Windows XP+, Linux/(systemd | Upstart | SysV), and OSX/Launchd.
